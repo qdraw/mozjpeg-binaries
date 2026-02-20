@@ -81,7 +81,9 @@ jobs:
             JOBS="$(sysctl -n hw.ncpu)"
           fi
 
-          CMAKE_EXTRA=()
+          # Ensure array is declared even under `set -u`
+          declare -a CMAKE_EXTRA=()
+
           if [[ "${{ matrix.os }}" == "linux" && "${{ matrix.arch }}" == "aarch64" ]]; then
             CMAKE_EXTRA+=(
               -DCMAKE_SYSTEM_NAME=Linux
