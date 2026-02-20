@@ -81,11 +81,20 @@ jobs:
             JOBS="$(sysctl -n hw.ncpu)"
           fi
 
-          # Ensure array is declared even under `set -u`
-          declare -a CMAKE_EXTRA=()
+          # Build the cmake invocation as an array (safe with `set -u`)
+          declare -a CMAKE_CMD=(
+            cmake ..
+            -G "Unix Makefiles"
+            -DCMAKE_BUILD_TYPE=Release
+            -DENABLE_SHARED=FALSE
+            -DENABLE_STATIC=TRUE
+            -DPNG_SUPPORTED=ON
+            -DWITH_JPEG8=ON
+            -DCMAKE_INSTALL_PREFIX="$(pwd)/install"
+          )
 
           if [[ "${{ matrix.os }}" == "linux" && "${{ matrix.arch }}" == "aarch64" ]]; then
-            CMAKE_EXTRA+=(
+            CMAKE_CMD+=(
               -DCMAKE_SYSTEM_NAME=Linux
               -DCMAKE_SYSTEM_PROCESSOR=aarch64
               -DCMAKE_C_COMPILER=aarch64-linux-gnu-gcc
@@ -93,15 +102,7 @@ jobs:
             )
           fi
 
-          cmake .. \
-            -G"Unix Makefiles" \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DENABLE_SHARED=FALSE \
-            -DENABLE_STATIC=TRUE \
-            -DPNG_SUPPORTED=ON \
-            -DWITH_JPEG8=ON \
-            -DCMAKE_INSTALL_PREFIX="$(pwd)/install" \
-            "${CMAKE_EXTRA[@]}"
+          "${CMAKE_CMD[@]}"
 
           make -j"$JOBS"
           make install
@@ -109,10 +110,3 @@ jobs:
           # Package install output for artifact upload
           cd install
           tar -czf "$GITHUB_WORKSPACE/mozjpeg-${{ matrix.target }}.tar.gz" .
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: mozjpeg-${{ matrix.target }}
-          path: mozjpeg-${{ matrix.target }}.tar.gz
-          if-no-files-found: error
