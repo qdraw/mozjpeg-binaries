@@ -65,11 +65,11 @@ jobs:
         run: |
           set -euxo pipefail
 
-          cd "$HOME"
+          cd "${{ github.workspace }}"
           rm -rf mozjpeg-master.zip mozjpeg-master
           wget https://codeload.github.com/mozilla/mozjpeg/zip/master -O mozjpeg-master.zip
           unzip mozjpeg-master.zip
-          cd "$HOME/mozjpeg-master"
+          cd "${{ github.workspace }}/mozjpeg-master"
 
           mkdir -p build
           cd build
@@ -110,6 +110,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: cjpeg-${{ matrix.target }}
-          path: $HOME/mozjpeg-master/build/cjpeg
+          path: ${{ github.workspace }}/mozjpeg-master/build/cjpeg
           if-no-files-found: error
 
