@@ -88,7 +88,7 @@ jobs:
             -DCMAKE_BUILD_TYPE=Release
             -DENABLE_SHARED=FALSE
             -DENABLE_STATIC=TRUE
-            -DPNG_SUPPORTED=ON
+            -DPNG_SUPPORTED=OFF
             -DWITH_JPEG8=ON
             -DCMAKE_INSTALL_PREFIX="$(pwd)/install"
           )
