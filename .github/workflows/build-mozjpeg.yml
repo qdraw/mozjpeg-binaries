@@ -1,0 +1,116 @@
+name: build-mozjpeg
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  build:
+    name: ${{ matrix.target }}
+    runs-on: ${{ matrix.runs_on }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: macos-arm64
+            runs_on: macos-14
+            os: macos
+            arch: arm64
+          - target: macos-x64
+            runs_on: macos-13
+            os: macos
+            arch: x86_64
+          - target: linux-x64
+            runs_on: ubuntu-latest
+            os: linux
+            arch: x86_64
+          - target: linux-arm64
+            runs_on: ubuntu-latest
+            os: linux
+            arch: aarch64
+
+    steps:
+      - name: Install dependencies (macOS)
+        if: matrix.os == 'macos'
+        shell: bash
+        run: |
+          set -euxo pipefail
+          brew update
+          brew install cmake
+
+      - name: Install dependencies (Linux x64)
+        if: matrix.os == 'linux' && matrix.arch == 'x86_64'
+        shell: bash
+        run: |
+          set -euxo pipefail
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential cmake unzip wget
+
+      - name: Install dependencies (Linux arm64 cross)
+        if: matrix.os == 'linux' && matrix.arch == 'aarch64'
+        shell: bash
+        run: |
+          set -euxo pipefail
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential cmake unzip wget \
+            gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
+            qemu-user-static
+
+      - name: Build mozjpeg
+        shell: bash
+        run: |
+          set -euxo pipefail
+
+          cd "$HOME"
+          rm -rf mozjpeg-master.zip mozjpeg-master
+          wget https://codeload.github.com/mozilla/mozjpeg/zip/master -O mozjpeg-master.zip
+          unzip mozjpeg-master.zip
+          cd "$HOME/mozjpeg-master"
+
+          mkdir -p build
+          cd build
+
+          # parallelism (portable)
+          if command -v nproc >/dev/null 2>&1; then
+            JOBS="$(nproc)"
+          else
+            JOBS="$(sysctl -n hw.ncpu)"
+          fi
+
+          CMAKE_EXTRA=()
+          if [[ "${{ matrix.os }}" == "linux" && "${{ matrix.arch }}" == "aarch64" ]]; then
+            CMAKE_EXTRA+=(
+              -DCMAKE_SYSTEM_NAME=Linux
+              -DCMAKE_SYSTEM_PROCESSOR=aarch64
+              -DCMAKE_C_COMPILER=aarch64-linux-gnu-gcc
+              -DCMAKE_CXX_COMPILER=aarch64-linux-gnu-g++
+            )
+          fi
+
+          cmake .. \
+            -G"Unix Makefiles" \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DENABLE_SHARED=FALSE \
+            -DENABLE_STATIC=TRUE \
+            -DPNG_SUPPORTED=ON \
+            -DWITH_JPEG8=ON \
+            -DCMAKE_INSTALL_PREFIX="$(pwd)/install" \
+            "${CMAKE_EXTRA[@]}"
+
+          make -j"$JOBS"
+          make install
+
+          # Package install output for artifact upload
+          cd install
+          tar -czf "$GITHUB_WORKSPACE/mozjpeg-${{ matrix.target }}.tar.gz" .
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mozjpeg-${{ matrix.target }}
+          path: mozjpeg-${{ matrix.target }}.tar.gz
+          if-no-files-found: error
