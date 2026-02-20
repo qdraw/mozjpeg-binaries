@@ -103,10 +103,13 @@ jobs:
           fi
 
           "${CMAKE_CMD[@]}"
-
+          
           make -j"$JOBS"
-          make install
 
-          # Package install output for artifact upload
-          cd install
-          tar -czf "$GITHUB_WORKSPACE/mozjpeg-${{ matrix.target }}.tar.gz" .
+      - name: Upload cjpeg artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cjpeg-${{ matrix.target }}
+          path: $HOME/mozjpeg-master/build/cjpeg
+          if-no-files-found: error
+
