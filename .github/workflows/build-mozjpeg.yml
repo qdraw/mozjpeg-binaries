@@ -15,11 +15,11 @@ jobs:
       matrix:
         include:
           - target: macos-arm64
-            runs_on: macos-14
+            runs_on: macos-latest
             os: macos
             arch: arm64
           - target: macos-x64
-            runs_on: macos-13
+            runs_on: macos-latest
             os: macos
             arch: x86_64
           - target: linux-x64
