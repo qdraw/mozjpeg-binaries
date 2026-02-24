@@ -1,0 +1,4 @@
+mozjpeg.tar.gz
+out/
+build/
+vcpkg/
