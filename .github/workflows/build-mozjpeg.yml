@@ -183,7 +183,7 @@ jobs:
             ${{ github.workspace }}/linux-x64
             ${{ github.workspace }}/macos-arm64
             ${{ github.workspace }}/macos-x64
-            ${{ github.workspace }}/windows-x64
+            ${{ github.workspace }}/windows-x64.exe
           name: Release ${{ steps.get_tag_name.outputs.VERSION }}
           token: ${{ secrets.GITHUB_TOKEN }}
           fail_on_unmatched_files: true
@@ -194,5 +194,5 @@ jobs:
             - [mozjpeg-linux-x64](./linux-x64)
             - [mozjpeg-macos-arm64](./macos-arm64)
             - [mozjpeg-macos-x64](./macos-x64)  
-            - [mozjpeg-windows-x64](./windows-x64)  
+            - [mozjpeg-windows-x64](./windows-x64.exe)  
 
