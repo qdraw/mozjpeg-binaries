@@ -136,16 +136,16 @@ jobs:
         uses: actions/upload-artifact@v4
         if: matrix.os == 'windows'
         with:
-          name: cjpeg-${{ matrix.target }}
+          name: mozjpeg-${{ matrix.target }}
           path: |
-            ${{ github.workspace }}/out/cjpeg-static.exe
+            ${{ github.workspace }}/out/mozjpeg.exe
           if-no-files-found: error
           
-      - name: Upload cjpeg artifact
+      - name: Upload cjpeg artifact *nix
         uses: actions/upload-artifact@v4
         if: matrix.os != 'windows'
         with:
-          name: cjpeg-${{ matrix.target }}
+          name: mozjpeg-${{ matrix.target }}
           path: |
             ${{ github.workspace }}/build/cjpeg
           if-no-files-found: error
