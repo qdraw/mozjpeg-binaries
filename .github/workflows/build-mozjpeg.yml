@@ -119,8 +119,8 @@ jobs:
           
           echo "done"
           
-          ls
-          ls build
+          ls -lah
+          
 
       # ---------- Build (Windows) ----------
       - name: Build mozjpeg (Windows)
@@ -136,7 +136,7 @@ jobs:
         with:
           name: cjpeg-${{ matrix.target }}
           path: |
-            ${{ github.workspace }}/mozjpeg-master/out/cjpeg.exe
+            ${{ github.workspace }}/mozjpeg-master/out/cjpeg-static.exe
           if-no-files-found: error
           
       - name: Upload cjpeg artifact
@@ -145,6 +145,6 @@ jobs:
         with:
           name: cjpeg-${{ matrix.target }}
           path: |
-            ${{ github.workspace }}/mozjpeg-master/build/cjpeg
+            ${{ github.workspace }}/mozjpeg-master/cjpeg
           if-no-files-found: error
           
