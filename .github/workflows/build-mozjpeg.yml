@@ -155,6 +155,16 @@ jobs:
           path: |
             ${{ github.workspace }}/mozjpeg-windows-x64
 
+      - name: Copy files to root for release
+        shell: bash
+        run: |
+          cp ${{ github.workspace }}/mozjpeg-linux-arm64/mozjpeg ${{ github.workspace }}/linux-arm64
+          cp ${{ github.workspace }}/mozjpeg-linux-x64/mozjpeg ${{ github.workspace }}/linux-x64
+          cp ${{ github.workspace }}/mozjpeg-macos-arm64/mozjpeg ${{ github.workspace }}/macos-arm64
+          cp ${{ github.workspace }}/mozjpeg-macos-x64/mozjpeg ${{ github.workspace }}/macos-x64
+          cp ${{ github.workspace }}/mozjpeg-windows-x64/mozjpeg.exe ${{ github.workspace }}/windows-x64.exe
+          ls -lah ${{ github.workspace }}
+
       - name: Get tag name (needed for create release)
         id: get_tag_name
         if: startsWith(github.ref, 'refs/tags/v')
@@ -169,19 +179,20 @@ jobs:
         with:
           tag_name: ${{ github.ref }}
           files: |
-            ${{ github.workspace }}/mozjpeg-linux-arm64
-            ${{ github.workspace }}/mozjpeg-linux-x64
-            ${{ github.workspace }}/mozjpeg-macos-arm64
-            ${{ github.workspace }}/mozjpeg-macos-x64
-            ${{ github.workspace }}/mozjpeg-windows-x64
+            ${{ github.workspace }}/linux-arm64
+            ${{ github.workspace }}/linux-x64
+            ${{ github.workspace }}/macos-arm64
+            ${{ github.workspace }}/macos-x64
+            ${{ github.workspace }}/windows-x64
           name: Release ${{ steps.get_tag_name.outputs.VERSION }}
           token: ${{ secrets.GITHUB_TOKEN }}
           fail_on_unmatched_files: true
           body: |
             ## Binaries
 
-            - [mozjpeg-windows-x64](./mozjpeg-windows-x64/mozjpeg.exe)
-            - [mozjpeg-linux-x64](./mozjpeg-linux-x64/mozjpeg)
-            - [mozjpeg-linux-arm64](./mozjpeg-linux-arm64/mozjpeg)
-            - [mozjpeg-macos-x64](./mozjpeg-macos-x64/mozjpeg)
-            - [mozjpeg-macos-arm64](./mozjpeg-macos-arm64/mozjpeg)
+            - [mozjpeg-linux-arm64](./linux-arm64)
+            - [mozjpeg-linux-x64](./linux-x64)
+            - [mozjpeg-macos-arm64](./macos-arm64)
+            - [mozjpeg-macos-x64](./macos-x64)  
+            - [mozjpeg-windows-x64](./windows-x64)  
+
