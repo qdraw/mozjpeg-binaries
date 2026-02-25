@@ -149,4 +149,18 @@ jobs:
           path: |
             ${{ github.workspace }}/build/cjpeg
           if-no-files-found: error
-          
+
+  create_release:
+    name: Create Release
+    needs: [build]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      discussions: write
+    steps:
+      - name: Download windows-x64 as build artifact
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131
+        with:
+          name: windows-x64
+          path: |
+            ${{ github.workspace }}/windows-x64
