@@ -120,8 +120,10 @@ if (-not $Exe) {
 }
 
 Copy-Item $Exe.FullName (Join-Path $OutDir "cjpeg-static.exe") -Force
+Copy-Item $Exe.FullName (Join-Path $OutDir "mozjpeg.exe") -Force
 
 Pop-Location
 
 Write-Host "mozjpeg build complete"
 Write-Host "Output: $(Join-Path $OutDir "cjpeg-static.exe")"
+Write-Host "Output: $(Join-Path $OutDir "mozjpeg.exe")"
