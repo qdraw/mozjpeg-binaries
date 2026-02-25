@@ -145,6 +145,6 @@ jobs:
         with:
           name: cjpeg-${{ matrix.target }}
           path: |
-            ${{ github.workspace }}/mozjpeg-master/cjpeg
+            ${{ github.workspace }}/mozjpeg-master/build/cjpeg
           if-no-files-found: error
           
