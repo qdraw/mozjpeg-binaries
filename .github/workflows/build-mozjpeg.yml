@@ -118,7 +118,9 @@ jobs:
           make -j"$JOBS"
           
           echo "done"
-          
+          echo "pwd"
+          pwd
+          echo "ls"
           ls -lah
           
 
