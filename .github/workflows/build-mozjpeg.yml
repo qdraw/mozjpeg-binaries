@@ -136,7 +136,7 @@ jobs:
         with:
           name: cjpeg-${{ matrix.target }}
           path: |
-            ${{ github.workspace }}/mozjpeg-master/out/cjpeg-static.exe
+            ${{ github.workspace }}/out/cjpeg-static.exe
           if-no-files-found: error
           
       - name: Upload cjpeg artifact
@@ -145,6 +145,6 @@ jobs:
         with:
           name: cjpeg-${{ matrix.target }}
           path: |
-            ${{ github.workspace }}/mozjpeg-master/build/cjpeg
+            ${{ github.workspace }}/build/cjpeg
           if-no-files-found: error
           
