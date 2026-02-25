@@ -18,20 +18,31 @@ jobs:
             runs_on: macos-latest
             os: macos
             arch: arm64
+
           - target: macos-x64
             runs_on: macos-latest
             os: macos
             arch: x86_64
+
           - target: linux-x64
             runs_on: ubuntu-latest
             os: linux
             arch: x86_64
+
           - target: linux-arm64
             runs_on: ubuntu-latest
             os: linux
             arch: aarch64
 
+          - target: windows-x64
+            runs_on: windows-latest
+            os: windows
+            arch: x86_64
+
     steps:
+      - uses: actions/checkout@v4
+
+      # ---------- macOS ----------
       - name: Install dependencies (macOS)
         if: matrix.os == 'macos'
         shell: bash
@@ -40,6 +51,7 @@ jobs:
           brew update
           brew install cmake
 
+      # ---------- Linux ----------
       - name: Install dependencies (Linux x64)
         if: matrix.os == 'linux' && matrix.arch == 'x86_64'
         shell: bash
@@ -60,7 +72,16 @@ jobs:
             gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
             qemu-user-static
 
-      - name: Build mozjpeg
+      # ---------- Windows ----------
+      - name: Install dependencies (Windows)
+        if: matrix.os == 'windows'
+        shell: pwsh
+        run: |
+          choco install -y cmake ninja
+
+      # ---------- Build (Unix) ----------
+      - name: Build mozjpeg (Unix)
+        if: matrix.os != 'windows'
         shell: bash
         run: |
           set -euxo pipefail
@@ -69,19 +90,17 @@ jobs:
           rm -rf mozjpeg-master.zip mozjpeg-master
           wget https://codeload.github.com/mozilla/mozjpeg/zip/master -O mozjpeg-master.zip
           unzip mozjpeg-master.zip
-          cd "${{ github.workspace }}/mozjpeg-master"
+          cd mozjpeg-master
 
           mkdir -p build
           cd build
 
-          # parallelism (portable)
           if command -v nproc >/dev/null 2>&1; then
             JOBS="$(nproc)"
           else
             JOBS="$(sysctl -n hw.ncpu)"
           fi
 
-          # Build the cmake invocation as an array (safe with `set -u`)
           declare -a CMAKE_CMD=(
             cmake ..
             -G "Unix Makefiles"
@@ -103,13 +122,22 @@ jobs:
           fi
 
           "${CMAKE_CMD[@]}"
-          
           make -j"$JOBS"
+          mv 
 
+      # ---------- Build (Windows) ----------
+      - name: Build mozjpeg (Windows)
+        if: matrix.os == 'windows'
+        shell: pwsh
+        run: |
+          ./windows.ps1
+
+      # ---------- Artifacts ----------
       - name: Upload cjpeg artifact
         uses: actions/upload-artifact@v4
+        if: matrix.os == 'windows'
         with:
           name: cjpeg-${{ matrix.target }}
-          path: ${{ github.workspace }}/mozjpeg-master/build/cjpeg
+          path: |
+            ${{ github.workspace }}/mozjpeg-master/out/cjpeg.exe
           if-no-files-found: error
-
