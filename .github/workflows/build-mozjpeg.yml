@@ -80,56 +80,14 @@ jobs:
           set -euxo pipefail
 
           cd "${{ github.workspace }}"
-          rm -rf mozjpeg-master.zip mozjpeg-master
-          wget https://codeload.github.com/mozilla/mozjpeg/zip/master -O mozjpeg-master.zip
-          unzip mozjpeg-master.zip
-          cd mozjpeg-master
-
-          mkdir -p build
-          cd build
-
-          if command -v nproc >/dev/null 2>&1; then
-            JOBS="$(nproc)"
-          else
-            JOBS="$(sysctl -n hw.ncpu)"
-          fi
-
-          declare -a CMAKE_CMD=(
-            cmake ..
-            -G "Unix Makefiles"
-            -DCMAKE_BUILD_TYPE=Release
-            -DENABLE_SHARED=FALSE
-            -DENABLE_STATIC=TRUE
-            -DPNG_SUPPORTED=OFF
-            -DWITH_JPEG8=ON
-            -DCMAKE_INSTALL_PREFIX="$(pwd)/install"
-          )
-
-          if [[ "${{ matrix.os }}" == "linux" && "${{ matrix.arch }}" == "aarch64" ]]; then
-            CMAKE_CMD+=(
-              -DCMAKE_SYSTEM_NAME=Linux
-              -DCMAKE_SYSTEM_PROCESSOR=aarch64
-              -DCMAKE_C_COMPILER=aarch64-linux-gnu-gcc
-              -DCMAKE_CXX_COMPILER=aarch64-linux-gnu-g++
-            )
-          fi
-
-          "${CMAKE_CMD[@]}"
-          make -j"$JOBS"
-          
-          echo "done"
-          echo "pwd"
-          pwd
-          echo "ls"
-          ls -lah
-          
+          ./build-mozjpeg.sh ${{ matrix.os }} ${{ matrix.arch }}
 
       # ---------- Build (Windows) ----------
       - name: Build mozjpeg (Windows)
         if: matrix.os == 'windows'
         shell: pwsh
         run: |
-          ./windows.ps1
+          ./build-windows.ps1
 
       # ---------- Artifacts ----------
       - name: Upload cjpeg artifact windows
@@ -147,7 +105,7 @@ jobs:
         with:
           name: mozjpeg-${{ matrix.target }}
           path: |
-            ${{ github.workspace }}/build/cjpeg
+            ${{ github.workspace }}/out/${{ matrix.os }}-${{ matrix.arch }}/mozjpeg
           if-no-files-found: error
 
   create_release:
