@@ -72,13 +72,6 @@ jobs:
             gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
             qemu-user-static
 
-      # ---------- Windows ----------
-      - name: Install dependencies (Windows)
-        if: matrix.os == 'windows'
-        shell: pwsh
-        run: |
-          choco install -y cmake ninja
-
       # ---------- Build (Unix) ----------
       - name: Build mozjpeg (Unix)
         if: matrix.os != 'windows'
