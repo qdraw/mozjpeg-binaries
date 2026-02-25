@@ -38,6 +38,11 @@ jobs:
             os: linux
             arch: aarch64
 
+          - target: linux-armhf
+            runs_on: ubuntu-latest
+            os: linux
+            arch: armhf
+
           - target: windows-x64
             runs_on: windows-latest
             os: windows
@@ -74,6 +79,17 @@ jobs:
           sudo apt-get install -y --no-install-recommends \
             build-essential cmake unzip wget \
             gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
+            qemu-user-static
+
+      - name: Install dependencies (Linux armhf cross)
+        if: matrix.os == 'linux' && matrix.arch == 'armhf'
+        shell: bash
+        run: |
+          set -euxo pipefail
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential cmake unzip wget \
+            gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf \
             qemu-user-static
 
       # ---------- Build (Unix) ----------
@@ -120,6 +136,13 @@ jobs:
       contents: write
       discussions: write
     steps:
+      - name: Download mozjpeg-linux-armhf as build artifact
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131
+        with:
+          name: mozjpeg-linux-armhf
+          path: |
+            ${{ github.workspace }}/mozjpeg-linux-armhf
+
       - name: Download mozjpeg-linux-arm64 as build artifact
         uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131
         with:
@@ -158,6 +181,7 @@ jobs:
       - name: Copy files to root for release
         shell: bash
         run: |
+          cp ${{ github.workspace }}/mozjpeg-linux-armhf/mozjpeg ${{ github.workspace }}/linux-armhf
           cp ${{ github.workspace }}/mozjpeg-linux-arm64/mozjpeg ${{ github.workspace }}/linux-arm64
           cp ${{ github.workspace }}/mozjpeg-linux-x64/mozjpeg ${{ github.workspace }}/linux-x64
           cp ${{ github.workspace }}/mozjpeg-macos-arm64/mozjpeg ${{ github.workspace }}/macos-arm64
@@ -179,6 +203,7 @@ jobs:
         with:
           tag_name: ${{ github.ref }}
           files: |
+            ${{ github.workspace }}/linux-armhf
             ${{ github.workspace }}/linux-arm64
             ${{ github.workspace }}/linux-x64
             ${{ github.workspace }}/macos-arm64
@@ -190,6 +215,7 @@ jobs:
           body: |
             ## Binaries
 
+            - [mozjpeg-linux-armhf](./linux-armhf)
             - [mozjpeg-linux-arm64](./linux-arm64)
             - [mozjpeg-linux-x64](./linux-x64)
             - [mozjpeg-macos-arm64](./macos-arm64)

@@ -61,7 +61,7 @@ declare -a CMAKE_CMD=(
 )
 
 # -----------------------------
-# Cross-compilation (Linux ARM64)
+# Cross-compilation (Linux ARM)
 # -----------------------------
 if [[ "$OS" == "linux" && "$ARCH" == "aarch64" ]]; then
   CMAKE_CMD+=(
@@ -69,6 +69,13 @@ if [[ "$OS" == "linux" && "$ARCH" == "aarch64" ]]; then
     -DCMAKE_SYSTEM_PROCESSOR=aarch64
     -DCMAKE_C_COMPILER=aarch64-linux-gnu-gcc
     -DCMAKE_CXX_COMPILER=aarch64-linux-gnu-g++
+  )
+elif [[ "$OS" == "linux" && "$ARCH" == "armhf" ]]; then
+  CMAKE_CMD+=(
+    -DCMAKE_SYSTEM_NAME=Linux
+    -DCMAKE_SYSTEM_PROCESSOR=armv7l
+    -DCMAKE_C_COMPILER=arm-linux-gnueabihf-gcc
+    -DCMAKE_CXX_COMPILER=arm-linux-gnueabihf-g++
   )
 fi
 
