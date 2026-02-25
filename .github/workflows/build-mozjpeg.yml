@@ -116,7 +116,11 @@ jobs:
 
           "${CMAKE_CMD[@]}"
           make -j"$JOBS"
-          mv 
+          
+          echo "done"
+          
+          ls
+          ls build
 
       # ---------- Build (Windows) ----------
       - name: Build mozjpeg (Windows)
@@ -126,7 +130,7 @@ jobs:
           ./windows.ps1
 
       # ---------- Artifacts ----------
-      - name: Upload cjpeg artifact
+      - name: Upload cjpeg artifact windows
         uses: actions/upload-artifact@v4
         if: matrix.os == 'windows'
         with:
@@ -134,3 +138,13 @@ jobs:
           path: |
             ${{ github.workspace }}/mozjpeg-master/out/cjpeg.exe
           if-no-files-found: error
+          
+      - name: Upload cjpeg artifact
+        uses: actions/upload-artifact@v4
+        if: matrix.os != 'windows'
+        with:
+          name: cjpeg-${{ matrix.target }}
+          path: |
+            ${{ github.workspace }}/mozjpeg-master/build/cjpeg
+          if-no-files-found: error
+          
