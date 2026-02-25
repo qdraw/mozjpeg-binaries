@@ -124,3 +124,4 @@ Copy-Item $Exe.FullName (Join-Path $OutDir "cjpeg-static.exe") -Force
 Pop-Location
 
 Write-Host "mozjpeg build complete"
+Write-Host "Output: $(Join-Path $OutDir "cjpeg-static.exe")"
