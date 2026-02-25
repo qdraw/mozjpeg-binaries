@@ -215,10 +215,11 @@ jobs:
           body: |
             ## Binaries
 
-            - [mozjpeg-linux-armhf](./linux-armhf)
-            - [mozjpeg-linux-arm64](./linux-arm64)
-            - [mozjpeg-linux-x64](./linux-x64)
-            - [mozjpeg-macos-arm64](./macos-arm64)
-            - [mozjpeg-macos-x64](./macos-x64)  
-            - [mozjpeg-windows-x64](./windows-x64.exe)  
+            - linux-armhf
+            - linux-arm64
+            - linux-x64
+            - macos-arm64
+            - macos-x64
+            - windows-x64.exe
+
 
