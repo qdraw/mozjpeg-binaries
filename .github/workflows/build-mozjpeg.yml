@@ -169,11 +169,11 @@ jobs:
         with:
           tag_name: ${{ github.ref }}
           files: |
-            ${{ github.workspace }}/mozjpeg-windows-x64/mozjpeg.exe
-            ${{ github.workspace }}/mozjpeg-linux-x64/mozjpeg
-            ${{ github.workspace }}/mozjpeg-linux-arm64/mozjpeg
-            ${{ github.workspace }}/mozjpeg-macos-x64/mozjpeg
-            ${{ github.workspace }}/mozjpeg-macos-arm64/mozjpeg
+            ${{ github.workspace }}/mozjpeg-linux-arm64
+            ${{ github.workspace }}/mozjpeg-linux-x64
+            ${{ github.workspace }}/mozjpeg-macos-arm64
+            ${{ github.workspace }}/mozjpeg-macos-x64
+            ${{ github.workspace }}/mozjpeg-windows-x64
           name: Release ${{ steps.get_tag_name.outputs.VERSION }}
           token: ${{ secrets.GITHUB_TOKEN }}
           fail_on_unmatched_files: true
