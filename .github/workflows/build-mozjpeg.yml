@@ -51,6 +51,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # ---------- windows ----------
+      - name: Set up MSVC
+        if: matrix.os == 'windows'
+        uses: ilammy/msvc-dev-cmd@v1
+
       # ---------- macOS ----------
       - name: Install dependencies (macOS)
         if: matrix.os == 'macos'
