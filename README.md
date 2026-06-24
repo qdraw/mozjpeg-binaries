@@ -56,8 +56,6 @@ Document what you ship here (examples):
 - macOS x86_64 / arm64
 - Windows x86_64
 
-If you tell me what artifacts you actually publish, I’ll fill this section precisely.
-
 ## Verification
 
 Each release may include checksums (e.g., `SHA256SUMS`) to verify downloads.
