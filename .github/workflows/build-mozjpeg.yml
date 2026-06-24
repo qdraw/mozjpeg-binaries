@@ -53,13 +53,22 @@ jobs:
 
       # ---------- windows ----------
 
+      - uses: microsoft/setup-msbuild@v2
+        if: matrix.os == 'windows'
+        
       - name: Debug Visual Studio
         if: matrix.os == 'windows'
         run: |
+          echo "where vswhere"
           where vswhere
+          echo "vswhere"
           vswhere -latest -products *
+          echo "where cl"
           where cl
+          echo "where MSBUILD"
           where msbuild
+          echo "CL"
+          cl
 
       # ---------- macOS ----------
       - name: Install dependencies (macOS)
