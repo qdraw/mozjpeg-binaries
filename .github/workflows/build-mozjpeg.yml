@@ -53,8 +53,11 @@ jobs:
 
       # ---------- windows ----------
 
-      - uses: microsoft/setup-msbuild@v2
+      - name: Setup MSVC
         if: matrix.os == 'windows'
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
         
       - name: Debug Visual Studio
         if: matrix.os == 'windows'
